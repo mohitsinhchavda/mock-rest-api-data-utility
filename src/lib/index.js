@@ -1,6 +1,6 @@
 export default function dataMocker(
   func,
-  { dynamicImport, timeout = 30000, isMockForce, noDataResponse = false, errorResponse = false }
+  { dynamicImport = new Promise((resolve, reject) => reject()), timeout = 3000, isMockForce, noDataResponse = false, errorResponse = false }
 ) {
   /**
       @param func It is a callback which should be returning Promise i.e. () => api.get("/someAPI")
@@ -19,7 +19,6 @@ export default function dataMocker(
              @param errorResponse => bool. If true, returns Promise which will return {status: false} when using mock response
       @returns promise
     */
-   console.log(process.env.REACT_APP_IS_MOCK, `process.env.REACT_APP_IS_MOCK`)
   if (isMockForce !== undefined ? isMockForce : process.env.REACT_APP_IS_MOCK === "true") {
     if (noDataResponse) {
       return Promise.resolve({
@@ -32,9 +31,13 @@ export default function dataMocker(
         status: false,
       });
     }
-    return dynamicImport()
+    try{
+      return dynamicImport()
       .then((res) => {
         const json = res;
+        if(!json){
+          throw new Error("No JSON exist in given file")
+        }
         return new Promise((resolve) => {
           setTimeout(() => {
             const response = {
@@ -46,18 +49,25 @@ export default function dataMocker(
         });
       })
       .catch((error) => {
-        if (process.env.NODE_ENV === "test") {
-          console.error("MOCK DATA IMPORT ERROR:", error);
-          return errorPromiseResolveCb();
+        if (process.env.NODE_ENV !== "production") {
+          return errorPromiseResolveCb(error);
         }
       });
+    }
+    catch(error){
+      if (process.env.NODE_ENV === "production") {
+        return errorPromiseResolveCb(error);
+      }
+    }
+    
   } else {
     return Promise.resolve(func());
   }
 }
 
-function errorPromiseResolveCb() {
+function errorPromiseResolveCb(error) {
   return new Promise((resolve) => {
+    console.error("MOCK DATA IMPORT ERROR:", error);
     return resolve({
       status: false,
     });

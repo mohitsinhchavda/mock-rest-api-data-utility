@@ -1,6 +1,16 @@
 {
   "name": "mock-rest-api-data-utility",
   "version": "0.1.0",
+  "author": "mohit.chavda1997@gmail.com",
+  "keywords": [
+    "mock-data",
+    "mockdata",
+    "mock data",
+    "mock data rest api",
+    "rest api",
+    "mock api",
+    "mock-api"
+  ],
   "private": false,
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

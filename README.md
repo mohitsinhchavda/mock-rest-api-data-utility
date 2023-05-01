@@ -1,70 +1,83 @@
-# Getting Started with Create React App
+# Why this package?
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Sometimes, it is hard to mock data from your frontend app. You literally have to write unit test
+to do so. (And then you have to make sure, unit tests are also proper written).
+Let us be honest here and acknowledge, not all projects have that "time luxury" to do so.
+Moreover, you also want to test how your feature works with diff type of api response scenarios
+like no data response (204), error response (4xx & 5xx). And, while doing this you want to
+manage things centrally within the app without affecting when you deploy it on any environment.
+Also, imagine someone gives this solution and you don't have to worry about removing or changing the mock data files and their
+setup when you go production!! Yes, this is how awesome, simple and almost no-size this package is
+without literally any 3rd party dependency
 
-## Available Scripts
+So, here I am, with new npm package, which lets you do it centrally, with options.
 
-In the project directory, you can run:
+# Key takeaways
+- mock data easily with almost zero config (without worrying about how your app behaves in diff envs)
+- test how your UI behaves with no data responses from APIs
+- test how your UI behaves with error response from APIs
+- No dependency and almost zero size (as it is just simple js function with 30 lines of code with no import of anything)
 
-### `npm start`
+The package uses REACT_APP_IS_MOCK variable to enable mocking everywhere across app WHERE, this library is used.
+Also there is a manual override for a particular api calls with "isMockForce" option.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# Installation and Usage
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+yarn add --save-dev react-select
+```
 
-### `npm test`
+OR
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+npm i --save-dev react-select
+```
 
-### `npm run build`
+Add REACT_APP_IS_MOCK value as true in your environment variable file
+(If in any environment, you don't want to use the package, make it "false" or just simply not add it in that environment file
+or remove it)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Now, If you are doing this in your api caller
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```js
+function doApiCallAndReturnData() {
+  return api.get("/");
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+// Then you must be using this function somewhere
+doApiCallAndReturnData();
+```
 
-### `npm run eject`
+Then start doing this:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```js
+import dataMocker from "mock-rest-api-data-utility";
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+function doApiCallAndReturnData() {
+  return dataMocker(() => api.get("/"), {
+    dynamicImport: () => import("./path/to/yourmockdata.json"),
+    // dont worry about path and json data file existence in production
+    // you can avoid inclusion for json file completely and it won't
+    // affect the app at a;;
+  });
+}
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+// continue using your function like before
+doApiCallAndReturnData();
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# API
 
-## Learn More
+Now, this function would accept 2 arguments.
+1st one is, a function which would run if REACT_APP_IS_MOCK env variable is false OR "isMockForce" is false
+2nd one is, an object which consists of keys mentioned below
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+`dynamicImport` (a js import callback e.g. () => import("/path/mockdata/file.json") and if file doesn't exist, your app won't break and would throw an error under console with proper warning message) defaults to undefined
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+`timeout` (before promise resolves with mock data, so that you can test how your app actually look while loading and then resolving with data) defaults to 3 seconds
 
-### Code Splitting
+`noDataResponse` (How your app would look if your api resolves with no data {also after loading}) defaults to false
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+`errorResponse` (How your app would look if your api resolves with an error {also after loading}) defaults to false
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+`isMockForce` (Manually override REACT_APP_IS_MOCK variable's value for this particular call)
