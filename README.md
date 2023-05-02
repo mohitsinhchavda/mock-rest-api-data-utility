@@ -24,13 +24,13 @@ Also there is a manual override for a particular api calls with "isMockForce" op
 # Installation and Usage
 
 ```
-yarn add --save-dev react-select
+yarn add --save-dev mock-rest-api-data-utility
 ```
 
 OR
 
 ```
-npm i --save-dev react-select
+npm i mock-rest-api-data-utility --dev
 ```
 
 Add REACT_APP_IS_MOCK value as true in your environment variable file
