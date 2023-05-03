@@ -3,12 +3,16 @@
 Sometimes, it is hard to mock data from your frontend app. You literally have to write unit test
 to do so. (And then you have to make sure, unit tests are also proper written).
 Let us be honest here and acknowledge, not all projects have that "time luxury" to do so.
+
 Moreover, you also want to test how your feature works with diff type of api response scenarios
 like no data response (204), error response (4xx & 5xx). And, while doing this you want to
 manage things centrally within the app without affecting when you deploy it on any environment.
-Also, imagine someone gives this solution and you don't have to worry about removing or changing the mock data files and their
+
+Now, imagine someone gives this solution and you don't have to worry about removing or changing the mock data files and their
 setup when you go production!! Yes, this is how awesome, simple and almost no-size this package is
-without literally any 3rd party dependency
+without literally any 3rd party dependency.
+Original Size:	917 bytes gzipped (2.41KB uncompressed)
+Compiled Size:	517 bytes gzipped (1.1KB uncompressed)
 
 So, here I am, with new npm package, which lets you do it centrally, with options.
 
