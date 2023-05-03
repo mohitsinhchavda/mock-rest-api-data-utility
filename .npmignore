@@ -1,0 +1,6 @@
+/src/api
+/src/mockDataFiles
+/src/*[.js,.css,.svg]
+/node_modules
+/public
+.env
